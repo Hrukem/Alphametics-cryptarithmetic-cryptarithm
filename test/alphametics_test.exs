@@ -4,7 +4,20 @@ defmodule AlphameticsTest do
   test "puzzle" do
     all_permutations = Alphametics.permutation([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
 
-    #test "puzzle" 
+    #test "puzzle1 with spaces"
+    puzzle =  "s e  +fd f  =d  fd "
+    solution =
+      [
+        %{"d" => 8, "e" => 1, "f" => 7, "s" => 9},
+        %{"d" => 7, "e" => 1, "f" => 6, "s" => 9},
+        %{"d" => 6, "e" => 1, "f" => 5, "s" => 9},
+        %{"d" => 5, "e" => 1, "f" => 4, "s" => 9},
+        %{"d" => 4, "e" => 1, "f" => 3, "s" => 9},
+        %{"d" => 3, "e" => 1, "f" => 2, "s" => 9}
+      ]
+    assert Alphametics.solve(puzzle, all_permutations) == solution
+
+    #test "puzzle2" 
     puzzle = "violin+violin + viola = trio+ sonata"
     solution = 
       [

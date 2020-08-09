@@ -14,23 +14,21 @@ defmodule Alphametics do
 
   def work(all_permutations) do
     puzzle = IO.gets("Enter the puzzle: ")
+    cond  do
+      puzzle == "stop\n" ->
+        System.stop 
+        :timer.sleep(5000)
 
-    if (puzzle == "stop\n") do 
-      System.stop 
-      :timer.sleep(5000)
-    end
+      String.contains?(puzzle, "=") ->
+        solve(puzzle, all_permutations)
+        work(all_permutations)
 
-    if (String.contains?(puzzle, "=")) do
-      result = solve(puzzle, all_permutations)
-      IO.inspect(result)
-      work(all_permutations)
-    else 
-      IO.puts("Invalid input format, missing the character '='")
-      work(all_permutations)
+      true ->
+        IO.puts("Invalid input format, missing the character '='")
+        work(all_permutations)
     end
   end
-  
-  #puzzl of the form: "a + bc + de = fgh"
+
   def solve(puzzle, all_permutations) do
 
     {list_unique, count_unique, list_reverse} = ParseString.parse(puzzle)
@@ -47,20 +45,17 @@ defmodule Alphametics do
       |> Enum.uniq()
 
     #check that zero is not in the first place
-    not_zero_first(puzzle, result_all_variant, list_unique)
+    IO.inspect(not_zero_first(puzzle, result_all_variant, list_unique))
   end
  
   defp calculation_signatures(_, [], result) do
     n = Enum.count(result)
     #adding up to 10 elements to the list of signatures
-    result = Enum.reverse(result, List.duplicate(0, 10 - n))
-    result
+    Enum.reverse(result, List.duplicate(0, 10 - n))
   end
 
   defp calculation_signatures(list, [h | t], result) do
-    signature = calcul_sign(list, h, [], 0)
-    result = [signature | result]
-    calculation_signatures(list, t, result)
+    calculation_signatures(list, t, [calcul_sign(list, h, [], 0) | result])
   end
 
   #calculating the signature for a single letter
@@ -94,24 +89,23 @@ defmodule Alphametics do
   end
 
   defp signatures_multiplied_by_permutations( [], _sign, result ), do: result
-  defp signatures_multiplied_by_permutations( [h|t], sign, result ) do
-    acc = multiplication(h, sign, 0)
+  defp signatures_multiplied_by_permutations( [h|t], signat, result ) do
+    acc = multiplication(h, signat, 0)
     result = 
       if (acc == 0), do: [h | result], else: result
-    signatures_multiplied_by_permutations(t, sign, result)
+
+    signatures_multiplied_by_permutations(t, signat, result)
   end
 
   defp multiplication([], [], acc), do: acc
   defp multiplication( [h1|t1], [h2|t2], acc ) do
-    acc = h1*h2 + acc
-    multiplication(t1, t2, acc)
+    multiplication(t1, t2, h1*h2+acc)
   end
 
   defp cut_list([], _count_unique, list), do: list
   defp cut_list([h | t], count_unique, list) do
     res = Enum.slice(h, 0, count_unique)
-    list = [res | list]
-    cut_list(t, count_unique, list)
+    cut_list(t, count_unique, [res | list])
   end
 
   defp not_zero_first(

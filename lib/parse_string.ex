@@ -43,10 +43,10 @@ defmodule ParseString do
     List.flatten(list1, list2)      
   end
 
-  defp insert_sign(list, sign)do
+  defp insert_sign(list, signZ)do
     if List.first(list) == "-" || List.first(list) == "+",
       do: list,
-      else: List.insert_at(list, 0, sign)
+      else: List.insert_at(list, 0, signZ)
   end
 
   defp change_sign(x) do
